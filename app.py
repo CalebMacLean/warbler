@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, request, flash, redirect, session, g
+from flask import Flask, render_template, request, flash, redirect, session, g, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
@@ -21,6 +21,8 @@ app.config['SQLALCHEMY_ECHO'] = False
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
 toolbar = DebugToolbarExtension(app)
+
+app.app_context().push()
 
 connect_db(app)
 
@@ -114,7 +116,9 @@ def logout():
     """Handle logout of user."""
 
     # IMPLEMENT THIS
-
+    do_logout()
+    flash("Successfully Logged Out.", 'message')
+    return redirect(url_for('login'))
 
 ##############################################################################
 # General user routes:

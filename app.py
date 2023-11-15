@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, flash, redirect, session, g, 
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
-from forms import UserAddForm, LoginForm, MessageForm
+from forms import UserAddForm, LoginForm, MessageForm, UpdateUserForm
 from models import db, connect_db, User, Message
 
 CURR_USER_KEY = "curr_user"
@@ -214,8 +214,40 @@ def stop_following(follow_id):
 @app.route('/users/profile', methods=["GET", "POST"])
 def profile():
     """Update profile for current user."""
+    # Authentication check
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+    else:
+        user = g.user
 
-    # IMPLEMENT THIS
+    # Form var used in both GET and POST behaviors
+    form = UpdateUserForm()
+
+    # POST behaviors
+    if form.validate_on_submit():
+        # Secondary Authentication Check
+        auth_user = User.authenticate(user.username, form.password.data)
+        if auth_user:
+            if form.username.data:
+                user.username = form.username.data
+            if form.email.data:
+                user.email = form.email.data
+            if form.image_url.data:
+                user.image_url = form.image_url.data
+            if form.header_image_url.data:
+                user.header_image_url = form.header_image_url.data
+            if form.bio.data:
+                user.bio = form.bio.data
+            db.session.commit()
+            flash('Changes Commited.', 'message')
+            return redirect(f'/users/{user.id}')
+        else:
+            flash("Incorrect Passwored", "danger")
+    
+    # GET behaviors
+    return render_template('users/edit.html', form=form, user_id=g.user.id)
+
+
 
 
 @app.route('/users/delete', methods=["POST"])
@@ -296,8 +328,11 @@ def homepage():
     """
 
     if g.user:
+        user_following_ids = [user.id for user in g.user.following]
+
         messages = (Message
                     .query
+                    .filter(Message.user_id.in_(user_following_ids))
                     .order_by(Message.timestamp.desc())
                     .limit(100)
                     .all())

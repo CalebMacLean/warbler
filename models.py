@@ -130,6 +130,25 @@ class User(db.Model):
         found_user_list = [user for user in self.following if user == other_user]
         return len(found_user_list) == 1
 
+    def like_message(self, message):
+        """Liking another user's message"""
+        if not self.has_liked_message(message):
+            like = Likes(user_id=self.id, message_id=message.id)
+            db.session.add(like)
+        else:
+            self.unlike_message(message)
+
+    def unlike_message(self, message):
+        """Unliking a message a user has already liked"""
+        if self.has_liked_message(message):
+            Likes.query.filter_by(user_id=self.id, 
+                                  message_id=message.id).delete()
+
+    def has_liked_message(self, message):
+        """Checks a message to see if a user has liked it"""
+        return Likes.query.filter(Likes.user_id == self.id,
+                                  Likes.message_id == message.id).count() > 0
+
     @classmethod
     def signup(cls, username, email, password, image_url):
         """Sign up user.
@@ -199,6 +218,7 @@ class Message(db.Model):
 
     user = db.relationship('User')
 
+    likes = db.relationship('Likes', backref='message', lazy='dynamic')
 
 def connect_db(app):
     """Connect this database to provided Flask app.

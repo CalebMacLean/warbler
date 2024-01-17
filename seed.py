@@ -19,6 +19,7 @@ app.app_context().push()
 
 connect_db(app)
 
+print("Starting seed.py")
 
 db.drop_all()
 db.create_all()
@@ -33,3 +34,5 @@ with open('generator/follows.csv') as follows:
     db.session.bulk_insert_mappings(Follows, DictReader(follows))
 
 db.session.commit()
+
+print("Finishing seed.py")

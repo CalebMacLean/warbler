@@ -22,7 +22,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Run create_csvs.py to generate the CSV files
-RUN python create_csvs.py
+# RUN python create_csvs.py
 
 # Run seed.py to populate the database
 RUN python seed.py

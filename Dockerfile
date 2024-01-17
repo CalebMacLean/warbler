@@ -13,6 +13,11 @@ RUN apt-get update && apt-get install -y \
     python3-dev \
     libffi-dev
 
+# Set up a virtual environment
+RUN python -m venv /opt/venv
+# Activate the virtual environment
+ENV PATH="/opt/venv/bin:$PATH"
+
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 

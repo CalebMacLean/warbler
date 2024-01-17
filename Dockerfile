@@ -21,6 +21,12 @@ ENV PATH="/opt/venv/bin:$PATH"
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Run create_csvs.py to generate the CSV files
+RUN python create_csvs.py
+
+# Run seed.py to populate the database
+RUN python seed.py
+
 # Make port 80 available to the world outside this container
 EXPOSE 80
 

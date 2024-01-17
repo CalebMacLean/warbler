@@ -26,7 +26,6 @@ app.app_context().push()
 
 connect_db(app)
 
-db.create_all()
 ##############################################################################
 # User signup/login/logout
 

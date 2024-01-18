@@ -94,20 +94,22 @@ class User(db.Model):
         nullable=False,
     )
 
-    messages = db.relationship('Message')
+    messages = db.relationship('Message', backref='user', cascade='all,delete-orphan')
 
     followers = db.relationship(
         "User",
         secondary="follows",
         primaryjoin=(Follows.user_being_followed_id == id),
-        secondaryjoin=(Follows.user_following_id == id)
+        secondaryjoin=(Follows.user_following_id == id),
+        cascade='all,delete-orphan'
     )
 
     following = db.relationship(
         "User",
         secondary="follows",
         primaryjoin=(Follows.user_following_id == id),
-        secondaryjoin=(Follows.user_being_followed_id == id)
+        secondaryjoin=(Follows.user_being_followed_id == id),
+        cascade='all,delete-orphan'
     )
 
     likes = db.relationship(

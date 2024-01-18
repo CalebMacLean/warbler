@@ -101,7 +101,7 @@ class User(db.Model):
         secondary="follows",
         primaryjoin=(Follows.user_being_followed_id == id),
         secondaryjoin=(Follows.user_following_id == id),
-        cascade='all,delete-orphan'
+        cascade='all, delete'
     )
 
     following = db.relationship(
@@ -109,7 +109,7 @@ class User(db.Model):
         secondary="follows",
         primaryjoin=(Follows.user_following_id == id),
         secondaryjoin=(Follows.user_being_followed_id == id),
-        cascade='all,delete-orphan'
+        cascade='all, delete'
     )
 
     likes = db.relationship(

@@ -218,7 +218,6 @@ class Message(db.Model):
         nullable=False,
     )
 
-    user = db.relationship('User')
 
     likes = db.relationship('Likes', backref='message', lazy='dynamic')
 
